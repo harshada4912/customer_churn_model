@@ -1,0 +1,99 @@
+# Create a TXT file containing only the requested KPI DAX measures
+
+content = """
+========================================================
+Customer Churn KPI Measures (Power BI DAX)
+========================================================
+
+Table name used: 'Customer Churn'
+
+--------------------------------------------------------
+1. Total Customers
+--------------------------------------------------------
+Total Customers =
+DISTINCTCOUNT('Customer Churn'[customer_id])
+
+
+--------------------------------------------------------
+2. Active Customers
+--------------------------------------------------------
+Active Customers =
+CALCULATE(
+    [Total Customers],
+    'Customer Churn'[churn] = 0
+)
+
+
+--------------------------------------------------------
+3. Churned Customers
+--------------------------------------------------------
+Churned Customers =
+CALCULATE(
+    [Total Customers],
+    'Customer Churn'[churn] = 1
+)
+
+
+--------------------------------------------------------
+4. Churn Rate %
+--------------------------------------------------------
+Churn Rate % =
+DIVIDE([Churned Customers], [Total Customers], 0)
+
+(Format as Percentage in Power BI)
+
+
+--------------------------------------------------------
+5. Total Revenue
+--------------------------------------------------------
+Total Revenue =
+SUM('Customer Churn'[total_spend])
+
+
+--------------------------------------------------------
+6. Average Monthly Spend
+--------------------------------------------------------
+Average Monthly Spend =
+AVERAGE(
+    DIVIDE(
+        'Customer Churn'[total_spend],
+        'Customer Churn'[tenure],
+        0
+    )
+)
+
+
+--------------------------------------------------------
+7. Average Tenure
+--------------------------------------------------------
+Average Tenure =
+AVERAGE('Customer Churn'[tenure])
+
+
+--------------------------------------------------------
+8. Avg Support Calls
+--------------------------------------------------------
+Avg Support Calls =
+AVERAGE('Customer Churn'[support_calls])
+
+
+--------------------------------------------------------
+9. High Risk Customers
+--------------------------------------------------------
+High Risk Customers =
+CALCULATE(
+    DISTINCTCOUNT('Customer Churn'[customer_id]),
+    'Customer Churn'[support_calls] >= 5,
+    'Customer Churn'[payment_delay] >= 15,
+    'Customer Churn'[usage_frequency] <= 5
+)
+
+
+--------------------------------------------------------
+10. CLV (Customer Lifetime Value)
+--------------------------------------------------------
+CLV (Simple) = 
+[Average Total Spend] * [Average Tenure]
+
+
+========================================================
